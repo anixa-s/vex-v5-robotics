@@ -232,12 +232,45 @@ controller.buttonA.pressed(place_sequence)
 controller.buttonB.pressed(go_first_stack)
 controller.buttonX.pressed(zero_arm)
 
+# --- vision sensor setup ---------------------------------------------------
+# Assuming Vision20 is connected to PORT7 (update to match your wiring)
+vision_20 = Vision(Ports.PORT7)
 
+# Vision signatures defined in VEXcode Vision Utility:
+# The utility gives you parameters in this exact format:
+# Signature(id, uMin, uMax, uMean, vMin, vMax, vMean, range, type)
 
+vision_20__YELLO = Signature(1, 1873, 2981, 2427, -4389, -3621, -4005, 3.0, 0)
+vision_20__BLU   = Signature(2, -3211, -1985, -2598, 1201, 2450, 1825, 3.0, 0)
+vision_20__ORANGG = Signature(3, 5420, 7610, 6515, -2200, -1150, -1675, 3.0, 0)
+def block_turn():
+    """Custom block function defined in Blocks screenshot"""
+    claw.spin_for(FORWARD, 90, DEGREES)
+    drivetrain.drive_for(FORWARD, 200, MM)
+    claw.spin_for(REVERSE, 90, DEGREES)
+    arm.spin_to_position(180, DEGREES)
+    drivetrain.turn_for(RIGHT, 90, DEGREES)
 
-
-
-
+def process_vision():
+    """Vision tracking logic from screenshot"""
+    # 1. Check for Yellow object
+    vision_20.take_snapshot(vision_20__YELLO)
+    if vision_20.object_count > 0:
+        drivetrain.turn_for(RIGHT, 90, DEGREES)
+    else:
+        # 2. Check for Blue object
+        vision_20.take_snapshot(vision_20__BLU)
+        if vision_20.object_count > 0:
+            drivetrain.turn_for(LEFT, 90, DEGREES)
+        else:
+            # 3. Check for Orange object
+            vision_20.take_snapshot(vision_20__ORANGG)
+            if vision_20.object_count > 0:
+                # Check object width threshold (100 pixels)
+                if vision_20.largest_object.width > 100:
+                    drivetrain.drive_for(REVERSE, 200, MM)
+                else:
+                    block_turn()
 
 # when started
 arm.set_velocity(100, PERCENT)
