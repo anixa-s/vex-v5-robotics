@@ -272,6 +272,59 @@ def process_vision():
                 else:
                     block_turn()
 
+def autonomous():
+    """15-Second Autonomous Routine for VRC High Stakes / Override"""
+    brain.screen.clear_screen()
+    brain.screen.print("Running Autonomous...")
+    
+    # Set default speeds and hold modes
+    drivetrain.set_drive_velocity(60, PERCENT)
+    drivetrain.set_turn_velocity(40, PERCENT)
+    arm.set_stopping(HOLD)
+    claw.set_stopping(HOLD)
+    
+    # STEP 1: Secure starting mobile goal / ring element
+    # Close claw on pre-loaded game element
+    close_claw()
+    wait(0.3, SECONDS)
+    
+    # Lift arm slightly to clear field tile floor
+    arm.spin_to_position(MATCH_LOAD_DEG, DEGREES, wait=True)
+    
+    # STEP 2: Drive to high-scoring goal zone
+    drivetrain.drive_for(FORWARD, 600, MM)
+    
+    # STEP 3: Vision Sensor Alignment
+    # Scan for target orange element/goal
+    vision_20.take_snapshot(vision_20__ORANGG)
+    
+    if vision_20.object_count() > 0:
+        # Align horizontal center with screen center (X=160 in a 316x212 frame)
+        center_x = vision_20.largest_object().centerX
+        if center_x < 140:
+            drivetrain.turn_for(LEFT, 10, DEGREES)
+        elif center_x > 180:
+            drivetrain.turn_for(RIGHT, 10, DEGREES)
+            
+        # Drive forward to approach goal
+        drivetrain.drive_for(FORWARD, 300, MM)
+    else:
+        # Standard fallback movement if target object is not detected
+        drivetrain.drive_for(FORWARD, 300, MM)
+        
+    # STEP 4: Raise Arm and Score
+    arm.spin_to_position(FIRST_STACK_DEG, DEGREES, wait=True)
+    
+    # Lower claw slightly and open to place ring/goal
+    arm_spin_volts(REVERSE, PLACE_VOLTS)
+    wait(PLACE_WAIT_SEC, SECONDS)
+    open_claw()
+    arm.stop()
+    
+    # STEP 5: Back away to clear scoring zone and zero arm
+    drivetrain.drive_for(REVERSE, 400, MM)
+    zero_arm()
+
 # when started
 arm.set_velocity(100, PERCENT)
 arm.set_stopping(HOLD)
