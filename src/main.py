@@ -59,7 +59,7 @@ MATCH_LOAD_DEG = 30
 FIRST_STACK_DEG = 120
 PLACE_VOLTS = 8             # Blocks: spin Arm reverse at 8 volts
 PLACE_WAIT_SEC = 0.2
-DRIVE_DEADBAND = 5
+DRIVE_DEADBAND = 5          # A small range of input values around the center of the joystick that the robot's code intentionally ignores
 COAST_BELOW_DEG = 30
 CLAW_OPEN_DEG = 90
 CLAW_CLOSED_DEG = 0
@@ -79,7 +79,7 @@ def open_claw():
     claw.spin(REVERSE, CLAW_VELOCITY, PERCENT)  # Moves Down (Clockwise)
 
 
-# Control function to keep the claw from spinning forever. (Kaviysh)
+# Control function to keep the claw from spinning forever. (Kaviysh)    
 def claw_control():
     if controller.buttonL1.pressing():
         close_claw()
