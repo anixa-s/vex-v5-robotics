@@ -134,13 +134,6 @@ def place_sequence():
    arm.stop()
    arm_using_preset = False
 
-
-
-
-
-
-
-
 def apply_arm_hold_or_coast():
    if arm.position(DEGREES) < COAST_BELOW_DEG:
        arm.set_stopping(COAST)
@@ -232,7 +225,7 @@ controller.buttonA.pressed(place_sequence)
 controller.buttonB.pressed(go_first_stack)
 controller.buttonX.pressed(zero_arm)
 
-# --- vision sensor setup ---------------------------------------------------
+# --- vision sensor setup ---------------------------------------------------# Anika coded this on Oct 28
 # Assuming Vision20 is connected to PORT7 (update to match your wiring)
 vision_20 = Vision(Ports.PORT7)
 
@@ -251,7 +244,7 @@ def block_turn():
     arm.spin_to_position(180, DEGREES)
     drivetrain.turn_for(RIGHT, 90, DEGREES)
 
-def process_vision():
+def process_vision(): # Anika coded this on Oct 28
     """Vision tracking logic from screenshot"""
     # 1. Check for Yellow object
     vision_20.take_snapshot(vision_20__YELLO)
@@ -272,7 +265,7 @@ def process_vision():
                 else:
                     block_turn()
 
-def autonomous():
+def autonomous(): # Anika coded this on Oct 28
     """15-Second Autonomous Routine for VRC High Stakes / Override"""
     brain.screen.clear_screen()
     brain.screen.print("Running Autonomous...")
