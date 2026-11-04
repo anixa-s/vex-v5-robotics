@@ -143,7 +143,9 @@ def apply_arm_hold_or_coast():
 
 def arcade_drive():
    forward = controller.axis3.position()
-   turn = controller.axis1.position()
+   k=0.00005
+   forward = k*forward**3 + (1-10000*k)*forward
+   turn = controller.axis1.position() 
    left = forward + turn
    right = forward - turn
 
